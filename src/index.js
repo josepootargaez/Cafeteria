@@ -26,8 +26,9 @@ mongoose.connect("mongodb+srv://Admin:Admin-1@cluster0.tymyc.mongodb.net/Cafeter
     })
 .then(db=>console.log("conectado")).catch(err=> console.log(err));
 
-app.listen(process.env.port || 3000,()=>{
-    console.log("server on port");
+var server=app.listen(process.env.port || 3000,function(){
+    var port=server.address().port;
+    console.log("server on port "+port);
 });
 
 app.get("/",  (req, res)=>{
