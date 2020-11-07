@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" >
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title >Cafeteria</title>
+</head>
+<body>
+    <div class="container" id="app">
+        <h1 class="text-center mt-4">Cafeteria</h1>
+        <div id="login" class="" v-if="loginuser==true">
+            <form  @submit.prevent="login" class="w-50 m-auto">
+                <h2>Inicia Sesión</h2>
+                <div class="form-group">
+                    <label for="LabelUser">Correo:</label>
+                    <input type="email"  class="form-control" name="user" id="user" v-model="user" required>
+                </div>
+                <div class="form-group">
+                    <label for="LbPassword">Password</label>
+                    <input type="password"  class="form-control" id="Password" name="Password" v-model="password" required>
+                </div>
+                <div class="text-center">
+                    <button type="submit"  class="btn btn-success px-4"  >Iniciar Sesión</button>
+                    <br>
+                    <button type="button"  @click="showcreateAccount" class="btn btn-info px-4 mt-3">Crear Cuenta</button>
+                </div>
+            </form>
+        </div>
+        <div id="NewUser" class="" v-if="createuser==true">
+            <form   class="w-50 m-auto" @submit.prevent="createAccount">
+                <h2>Crea tu cuenta</h2>
+                <div class="form-group">
+                    
+                    <label for="LabelNewUser">Usuario:</label>
+                    <input type="text"  class="form-control" name="newUser" id="newUser" v-model="newuser" required>
+                    
+                </div>
+                <div class="form-group">
+                    <label for="Correo">Correo:</label>
+                    <input type="email"  class="form-control" name="Newcorreo" id="Newcorreo" v-model="newemail" required>
+                </div>
+                <div class="form-group">
+                    <label for="Password">Password</label>
+                    <input type="password"  class="form-control" id="Newpassword" name="Newpassword" v-model="newpass" required>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success px-4 mt-3">Crear Cuenta</button>
+                    <div class="mt-3">
+                        <a href="javascript:void(0)" class="mt-4" @click="showlogin">Iniciar Sesión</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+
+    </div>
+
+    <div class="modal fade" id="modalerror" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="tittlemodal"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p id="MSerror"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</body>
+<script>
+ 	var apps = new Vue({
+            el: "#app",
+            delimiters:['[[',']]'],
+			data: {
+              message: "Bienvenido",
+              loginuser:true,
+              createuser:false,
+              user:'',
+              password:'',
+              newuser:'',
+              newemail:'',
+              newpass:'',
+            },
+            methods:{
+                login:function(){
+                    vm=this;
+                    var params={
+                        user:vm.user,
+                        pass:vm.password
+                    }
+                    axios.post("/login",params).then(function(response){
+                        console.log(response.data.success);
+                        if(response.data.success==false&&response.data.error!=""){
+                            vm.modalerror(response.data.error);
+                            vm.showlogin();
+                            return false;
+                        }else{
+                            window.location.href = '/Dashboard'; 
+                        }
+                    }).catch(function(error){
+                        console.log(error);
+                    });
+                },
+                createAccount:function(){
+                    var params={
+                        usuario:vm.newuser,
+                        correo:vm.newemail,
+                        password:vm.newpass,
+                    }
+                    axios.post("/addUser",params).then(function(response){
+                        console.log(response.data.success);
+                        if(response.data.success==false&&response.data.error!=""){
+                            vm.modalerror(response.data.error);
+                            vm.showcreateAccount();
+                            return false;
+                        }else{
+                            vm.showlogin();
+                            // $("tittlemodal").text("Cuenta Creada");
+                            vm.modalerror(response.data.message,"Registro exitoso");
+
+                        }
+                    }).catch(function(error){
+
+                    });
+                },
+                showcreateAccount: function(){
+                            vm.loginuser=false;
+                            vm.createuser=true;
+                            vm.newuser='';
+                            vm.newemail='';
+                            vm.newpass='';
+                            vm.user="";
+                            vm.password="";
+                },
+                showlogin: function(){
+                            vm.loginuser=true;
+                            vm.createuser=false;
+                            vm.newuser='';
+                            vm.newemail='';
+                            vm.newpass='';
+                            vm.user="";
+                            vm.password="";
+                },
+                modalerror:function(error,title="¡Ha ocurrido algo!"){
+                        $("#tittlemodal").text(title);
+                        $("#MSerror").text(error);
+                        $("#modalerror").modal("show");
+                },
+            },
+            mounted(){
+                vm=this;
+                
+            }
+		  });
+
+</script>
+</html>
