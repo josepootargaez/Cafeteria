@@ -185,7 +185,7 @@ body {
                     }
                 axios.post("/addCoffe",params).then(function(response){
                         console.log(response.data.success);
-                        if(response.data.success==false&&response.data.error!=" "){
+                        if(response.data.success==false&&response.data.error!=""){
                             vm.modalerror(response.data.error);
                             return false;
                         }else{
@@ -240,6 +240,11 @@ body {
 
                     });
             },
+            modalerror:function(error,title="¡Ha ocurrido algo!"){
+                        $("#tittlemodal").text(title);
+                        $("#MSerror").text(error);
+                        $("#modalerror").modal("show");
+                },
             },
             
             mounted(){

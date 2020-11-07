@@ -126,13 +126,12 @@ app.post("/addUser", async (req,res)=>{
 });
 
 app.post("/addCoffe", async (req,res)=>{
-    // console.log(new user(req.body));
-    const coffes = await Coffe.find({correo:req.body.Nombre}).exec();
+    const coffes = await Coffe.find({Nombre:req.body.Nombre}).exec();
     var result={
         success:false,
         error:''
     }
-    // console.log(users[0].correo);
+    console.log(coffes);
     if(coffes.length>0){
         result.error="esta sucursal ya esta registrada";
         res.send(result);
