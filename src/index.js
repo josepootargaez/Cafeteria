@@ -6,7 +6,7 @@ const mongoose=require("mongoose");
 const Usuario=require("./models/users");
 const Coffe=require("./models/coffes");
 const session=require("express-session");
-// app.set('port',4000);
+app.set('port',4000);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.set("views",path.join(__dirname+"/views"));
 app.use(express.json());
@@ -21,13 +21,13 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 //base de datos
-mongoose.connect("mongodb://localhost/Cafeteria",{
+mongoose.connect("mongodb+srv://Admin:Admin-1@cluster0.tymyc.mongodb.net/Cafeteria?retryWrites=true&w=majority",{
     useNewUrlParser: true,
     useUnifiedTopology: true
     })
 .then(db=>console.log("conectado")).catch(err=> console.log(err));
 
-app.listen(process.env.port || 3000,()=>{
+app.listen(app.get("port"),()=>{
     console.log("server on port",app.get("port"));
 });
 
