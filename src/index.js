@@ -6,7 +6,6 @@ const mongoose=require("mongoose");
 const Usuario=require("./models/users");
 const Coffe=require("./models/coffes");
 const session=require("express-session");
-app.set('port',4000);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.set("views",path.join(__dirname+"/views"));
 app.use(express.json());
@@ -27,8 +26,8 @@ mongoose.connect("mongodb+srv://Admin:Admin-1@cluster0.tymyc.mongodb.net/Cafeter
     })
 .then(db=>console.log("conectado")).catch(err=> console.log(err));
 
-app.listen(app.get("port"),()=>{
-    console.log("server on port",app.get("port"));
+app.listen(process.env.port || 3000,()=>{
+    console.log("server on port");
 });
 
 app.get("/",  (req, res)=>{
